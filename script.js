@@ -15,7 +15,7 @@ let mensajes = [
   {
     "tipo": "imagen",
     "texto": "Das un poco* de luz a mi vida rutinaria. >Gracias por ser mi sol 🌞",
-    "src": "https://pixnio.com/free-images/2017/10/17/2017-10-17-06-16-22.jpg"
+    "src": "https://cdn.pixabay.com/animation/2024/05/27/21/55/21-55-52-574_512.gif"
   },
   {
     "tipo": "imagen",
@@ -37,7 +37,7 @@ let mensajes = [
     "texto": "Qué buscas?",
     "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCNUDOlXdYDs_55dk3QdQN7Yks_Jax3rHlqQ&s"
   },
-  /* {
+  {
     "tipo": "url-video",
     "texto": "Un par de nalgadas y a su casa >:3",
     "src": "https://v77.tiktokcdn.com/e760e5c78df946e7f13d469ead7a1ed8/68d1c0de/video/tos/useast2a/tos-useast2a-pve-0068/o4vTQxBoBQCIqiRKfEljfWLAsNTDrFu4OJG76E/?a=1233&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=800&bt=400&cs=0&ds=2&ft=bC~FgmadPD12NyG0Eh-UxCe2GY6e3wv25ycAp&mime_type=video_mp4&qs=0&rc=ZWY7aDszNzppOWVpMzg2ZkBpajhudHE5cjZoNTMzNzczM0AyNTY1M2FeXzMxMjAtMjZhYSNmM2NfMmRjcGphLS1kMTZzcw%3D%3D&vvpl=1&l=202509210534084354CA50A59E01791DE0&btag=e000b8000&cc=13"
@@ -76,7 +76,7 @@ let mensajes = [
     "tipo": "url-video",
     "texto": "Ya no estamos para niñerias.",
     "src":   "https://v77.tiktokcdn.com/f51ebff7826dcdf5b81383aad9f02a6c/68d1e1aa/video/tos/useast2a/tos-useast2a-ve-0068c001/okCPjRDRjWrIIMf5CAI9geNetjUgsLQGgZSCAv/?a=1233&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=6018&bt=3009&cs=0&ds=3&ft=L~O_3og.D12NvUkEeWIxRyCSblBF-UjNSlopiX&mime_type=video_mp4&qs=0&rc=cnF8b2hsc2d3SkBwaHIxaDFybndmZzpkOTlnOTY3Nmc3ZTw3M0BpM2o5Z3k5cmdxNjMzNzczM0BjRl5Nc3FePmJKYSNvYF90aHFmOiMuMC41NGExNjExMi8vYDRhYSMtbWIxMmRrZzBhLS1kMTZzcw%3D%3D&vvpl=1&l=202509210754120D36060A37DDE776A5DD&btag=e000b0000&cc=13"
-  }, */
+  },
   {
     "tipo": "url-video",
     "texto": "❤️",
@@ -94,22 +94,33 @@ class Flower {
   constructor(isButton = false) {
     this.x = random(0, W);
     this.y = random(0, H);
-    this.size = random(10, 20);
+    this.size = random(10, 30);
     this.petalCount = Math.floor(random(5, 8));
-    this.speed = random(0.3, 1.2);
+    this.speed = random(0.4, 1.3);
     this.isButton = isButton;
+    this.rotation = random(0, 2 * Math.PI);
+    this.rotationSpeed = random(0.005, 0.01);
+    this.pulsePhase = random(0, Math.PI * 1.8);
+    this.pulseSpeed = random(0.05, 0.07);
   }
 
   draw() {
     ctx.save();
     ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation); // 🌀 Rotar toda la flor
+
+    let currentSize = this.size;
+    if (this.isButton) {
+      const pulse = Math.sin(this.pulsePhase) * 0.1 + 1;
+      currentSize = this.size * pulse;
+    }
 
     for (let i = 0; i < this.petalCount; i++) {
       ctx.beginPath();
       ctx.rotate((2 * Math.PI) / this.petalCount);
       ctx.moveTo(0, 0);
-      ctx.quadraticCurveTo(this.size, this.size, 0, this.size * 2);
-      ctx.quadraticCurveTo(-this.size, this.size, 0, 0);
+      ctx.quadraticCurveTo(currentSize, currentSize, 0, currentSize * 2);
+      ctx.quadraticCurveTo(-currentSize, currentSize, 0, 0);
       ctx.fillStyle = "#FFD700";
       ctx.fill();
 
@@ -121,7 +132,8 @@ class Flower {
     }
 
     ctx.beginPath();
-    ctx.arc(0, 0, this.size / 3, 0, 2 * Math.PI);
+    // ctx.arc(0, 0, this.size / 3, 0, 2 * Math.PI);
+    ctx.arc(0, 0, currentSize / 3, 0, 2 * Math.PI);    
     ctx.fillStyle = "#8B4513";
     ctx.fill();
 
@@ -136,9 +148,13 @@ class Flower {
 
   update() {
     this.y += this.speed;
+    this.rotation += this.rotationSpeed;    
     if (this.y > H + 20) {
       this.y = -20;
       this.x = random(0, W);
+    }
+    if (this.isButton) {
+      this.pulsePhase += this.pulseSpeed;
     }
     this.draw();
   }
