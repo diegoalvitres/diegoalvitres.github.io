@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Flor rotando en Canvas</title>
+  <style>
+    canvas {
+      background-color: #f0f8ff;
+      display: block;
+      margin: auto;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="500" height="500"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let angle = 0;
+
+    function drawPetal(ctx, x, y, radius, angle) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(radius, -radius, 0, -radius * 2);
+      ctx.quadraticCurveTo(-radius, -radius, 0, 0);
+      ctx.fillStyle = '#ff69b4';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawFlower(x, y, petals, radius, angle) {
+      for (let i = 0; i < petals; i++) {
+        const a = angle + (i * 2 * Math.PI) / petals;
+        drawPetal(ctx, x, y, radius, a);
+      }
+
+      // Centro de la flor
+      ctx.beginPath();
+      ctx.arc(x, y, radius / 2, 0, 2 * Math.PI);
+      ctx.fillStyle = '#ffa500';
+      ctx.fill();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawFlower(canvas.width / 2, canvas.height / 2, 6, 40, angle);
+
+      angle += 0.01; // Velocidad de rotación
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
